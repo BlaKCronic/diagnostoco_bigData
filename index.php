@@ -7,13 +7,13 @@
 </head>
 <body>
     <nav>
-        <?php for ($i = 1; $i <= 10; $i++): ?>
+        <?php for ($i = 1; $i <= 5; $i++): ?>
             <a href="reportes/<?php echo $i; ?>.php">Reporte <?php echo $i; ?></a>
         <?php endfor; ?>
     </nav>
 
     <nav>
-        <?php for ($i = 1; $i <= 10; $i++): ?>
+        <?php for ($i = 1; $i <= 5; $i++): ?>
             <a href="grafica/<?php echo $i; ?>.php">Grafica <?php echo $i; ?></a>
         <?php endfor; ?>
     </nav>
