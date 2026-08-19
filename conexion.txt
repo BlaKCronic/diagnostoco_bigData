@@ -1,0 +1,12 @@
+se crea el subdirectorio desde powershell:
+ssh bigdata@200.23.53.68 "mkdir -p /home/bigdata/public_html/bellakos"
+
+se pedirá la pass:
+BigData#$
+
+se suben los archivos excepto el .git:
+cd "c:\Users\100204924\Documents\tec\materias\bigdata\diagnostico\page"
+scp -r index.php config.php reportes grafica bigdata@200.23.53.68:/home/bigdata/public_html/bellakos/
+
+probar:
+http://200.23.53.68/~bigdata/bellakos/index.php
