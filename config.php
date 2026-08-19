@@ -2,8 +2,8 @@
 declare(strict_types=1);
 $DB_HOST = 'localhost';
 $DB_NAME = 'employeesdb';
-$DB_USER = 'bigdata';
-$DB_PASS = 'BigData#$';
+$DB_USER = 'root';
+$DB_PASS = '';
 $DB_PORT = '3306';
 
 try {
