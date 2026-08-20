@@ -1,11 +1,10 @@
 <?php
-require_once __DIR__ . '/../db.php';
+declare(strict_types=1);
+require_once __DIR__ . '/../config.php';
 
 $pageTitle = 'Reporte 3 · Número de empleados por departamento';
 $section = 'reportes';
 $active = 3;
-
-$conn = getConnection();
 
 $sql = "SELECT d.dept_name AS departamento, COUNT(*) AS total_empleados
         FROM dept_emp de
@@ -14,16 +13,12 @@ $sql = "SELECT d.dept_name AS departamento, COUNT(*) AS total_empleados
         GROUP BY d.dept_name
         ORDER BY total_empleados DESC";
 
-$result = $conn->query($sql);
+$filas = $pdo->query($sql)->fetchAll();
 
-$filas = [];
 $totalGeneral = 0;
-while ($row = $result->fetch_assoc()) {
-    $filas[] = $row;
-    $totalGeneral += (int) $row['total_empleados'];
+foreach ($filas as $fila) {
+    $totalGeneral += (int) $fila['total_empleados'];
 }
-
-$conn->close();
 
 require __DIR__ . '/../includes/header.php';
 ?>

@@ -1,11 +1,10 @@
 <?php
-require_once __DIR__ . '/../db.php';
+declare(strict_types=1);
+require_once __DIR__ . '/../config.php';
 
 $pageTitle = 'Gráfica 3 · Número de empleados por departamento';
 $section = 'grafica';
 $active = 3;
-
-$conn = getConnection();
 
 $sql = "SELECT d.dept_name AS departamento, COUNT(*) AS total_empleados
         FROM dept_emp de
@@ -14,17 +13,13 @@ $sql = "SELECT d.dept_name AS departamento, COUNT(*) AS total_empleados
         GROUP BY d.dept_name
         ORDER BY total_empleados DESC";
 
-$result = $conn->query($sql);
-
-$filas = [];
+$filas = $pdo->query($sql)->fetchAll();
 $maxValue = 0;
-while ($row = $result->fetch_assoc()) {
-    $row['total_empleados'] = (int) $row['total_empleados'];
-    $filas[] = $row;
-    $maxValue = max($maxValue, $row['total_empleados']);
+foreach ($filas as &$fila) {
+    $fila['total_empleados'] = (int) $fila['total_empleados'];
+    $maxValue = max($maxValue, $fila['total_empleados']);
 }
-
-$conn->close();
+unset($fila);
 
 // --- Escala del eje X: paso "bonito" y máximo redondeado hacia arriba ---
 function niceAxisScale(int $maxValue, int $targetTicks = 5): array

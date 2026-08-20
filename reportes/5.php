@@ -15,7 +15,7 @@ $sql = "SELECT
             TIMESTAMPDIFF(YEAR, MIN(s.from_date), LEAST(MAX(s.to_date), CURDATE())) AS anios_carrera
         FROM employees e
         JOIN salaries s ON e.emp_no = s.emp_no
-        GROUP BY e.emp_no, e.first_name, e.last_name
+        GROUP BY e.emp_no
         HAVING anios_carrera > 0
         ORDER BY incremento_pct DESC
         LIMIT :limite";

@@ -1,9 +1,12 @@
 <?php
+// Plantilla de configuración de base de datos.
+// Copia este archivo como config.php (ignorado por git, ver .gitignore) y
+// coloca ahí tus credenciales reales -- locales o del servidor de despliegue.
 declare(strict_types=1);
 $DB_HOST = 'localhost';
 $DB_NAME = 'employeesdb';
-$DB_USER = 'bigdata';
-$DB_PASS = 'BigData#$';
+$DB_USER = 'root';
+$DB_PASS = '';
 $DB_PORT = '3306';
 
 try {
