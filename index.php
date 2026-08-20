@@ -9,7 +9,7 @@
 <body>
     <h1>Diagnóstico Big Data</h1>
     <nav>
-        <?php for ($i = 1; $i <= 6; $i++): ?>
+        <?php for ($i = 1; $i <= 7; $i++): ?>
             <a href="reportes/<?php echo $i; ?>.php">Reporte <?php echo $i; ?></a>
         <?php endfor; ?>
     </nav>
