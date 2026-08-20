@@ -2,10 +2,6 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../config.php';
 
-$pageTitle = 'Reporte 3 · Número de empleados por departamento';
-$section = 'reportes';
-$active = 3;
-
 $sql = "SELECT d.dept_name AS departamento, COUNT(*) AS total_empleados
         FROM dept_emp de
         JOIN departments d ON d.dept_no = de.dept_no
@@ -19,36 +15,54 @@ $totalGeneral = 0;
 foreach ($filas as $fila) {
     $totalGeneral += (int) $fila['total_empleados'];
 }
-
-require __DIR__ . '/../includes/header.php';
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte 3 &middot; Número de empleados por departamento</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
 
-<div class="card">
-    <h2>Número de empleados por departamento</h2>
-    <p class="subtitle">Dimensiona el tamaño de cada departamento para planificación de recursos y espacio. Se consideran únicamente asignaciones vigentes (empleados activos en el departamento).</p>
+    <h1>Número de empleados por departamento</h1>
 
-    <table class="report-table">
-        <thead>
-            <tr>
-                <th>Departamento</th>
-                <th class="numeric">Total de empleados</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($filas as $fila): ?>
-            <tr>
-                <td><?php echo htmlspecialchars($fila['departamento']); ?></td>
-                <td class="numeric"><?php echo number_format((int) $fila['total_empleados']); ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-        <tfoot>
-            <tr>
-                <td>Total</td>
-                <td class="numeric"><?php echo number_format($totalGeneral); ?></td>
-            </tr>
-        </tfoot>
-    </table>
-</div>
+    <nav>
+        <a href="../index.php">Volver al inicio</a>
+    </nav>
 
-<?php require __DIR__ . '/../includes/footer.php'; ?>
+    <p class="desc">
+        Dimensiona el tamaño de cada departamento para planificación de recursos y espacio.
+        Se consideran únicamente asignaciones vigentes (empleados activos en el departamento).
+    </p>
+
+    <div class="card">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Departamento</th>
+                        <th>Total de empleados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($filas as $fila): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($fila['departamento']) ?></td>
+                        <td><?= number_format((int) $fila['total_empleados']) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Total</td>
+                        <td><?= number_format($totalGeneral) ?></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

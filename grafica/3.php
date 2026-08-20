@@ -2,10 +2,6 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../config.php';
 
-$pageTitle = 'Gráfica 3 · Número de empleados por departamento';
-$section = 'grafica';
-$active = 3;
-
 $sql = "SELECT d.dept_name AS departamento, COUNT(*) AS total_empleados
         FROM dept_emp de
         JOIN departments d ON d.dept_no = de.dept_no
@@ -68,206 +64,220 @@ function xForValue(int $value, int $axisMax, int $plotWidth): float
 {
     return $axisMax > 0 ? ($value / $axisMax) * $plotWidth : 0;
 }
-
-require __DIR__ . '/../includes/header.php';
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfica 3 &middot; Número de empleados por departamento</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
 
-<div class="card">
-    <h2>Número de empleados por departamento</h2>
-    <p class="subtitle">Tamaño de cada departamento (empleados con asignación vigente) — útil para planificar recursos y espacio. <a href="../reportes/3.php">Ver como tabla</a>.</p>
+    <h1>Número de empleados por departamento</h1>
 
-    <div class="chart-wrap">
-        <svg
-            class="dept-chart"
-            viewBox="0 0 <?php echo $svgWidth; ?> <?php echo $svgHeight; ?>"
-            role="img"
-            aria-label="Número de empleados por departamento"
-        >
-            <!-- Gridlines verticales -->
-            <?php for ($tick = 0; $tick <= $axisMax; $tick += $axisStep):
-                $x = $marginLeft + xForValue($tick, $axisMax, $plotWidth);
-            ?>
+    <nav>
+        <a href="../index.php">Volver al inicio</a>
+    </nav>
+
+    <p class="desc">
+        Tamaño de cada departamento (empleados con asignación vigente) — útil para planificar
+        recursos y espacio. <a href="../reportes/3.php">Ver como tabla</a>.
+    </p>
+
+    <div class="card">
+        <div class="dept-chart-wrap">
+            <svg
+                class="dept-chart"
+                viewBox="0 0 <?php echo $svgWidth; ?> <?php echo $svgHeight; ?>"
+                role="img"
+                aria-label="Número de empleados por departamento"
+            >
+                <!-- Gridlines verticales -->
+                <?php for ($tick = 0; $tick <= $axisMax; $tick += $axisStep):
+                    $x = $marginLeft + xForValue($tick, $axisMax, $plotWidth);
+                ?>
+                    <line
+                        x1="<?php echo $x; ?>" y1="<?php echo $marginTop; ?>"
+                        x2="<?php echo $x; ?>" y2="<?php echo $marginTop + $plotHeight; ?>"
+                        class="gridline"
+                    />
+                    <text
+                        x="<?php echo $x; ?>" y="<?php echo $marginTop + $plotHeight + 20; ?>"
+                        class="axis-label" text-anchor="middle"
+                    ><?php echo number_format($tick); ?></text>
+                <?php endfor; ?>
+
+                <!-- Barras -->
+                <?php foreach ($filas as $i => $fila):
+                    $y = $marginTop + $i * $rowHeight;
+                    $barW = xForValue($fila['total_empleados'], $axisMax, $plotWidth);
+                    $labelText = $fila['departamento'] . ': ' . number_format($fila['total_empleados']) . ' empleados';
+                ?>
+                    <text
+                        x="<?php echo $marginLeft - 12; ?>" y="<?php echo $y + $barThickness / 2; ?>"
+                        class="dept-label" text-anchor="end" dominant-baseline="middle"
+                    ><?php echo htmlspecialchars($fila['departamento']); ?></text>
+
+                    <rect
+                        class="bar-hit"
+                        x="<?php echo $marginLeft; ?>" y="<?php echo $y; ?>"
+                        width="<?php echo $plotWidth; ?>" height="<?php echo $barThickness; ?>"
+                        fill="transparent"
+                        tabindex="0"
+                        data-departamento="<?php echo htmlspecialchars($fila['departamento']); ?>"
+                        data-valor="<?php echo (int) $fila['total_empleados']; ?>"
+                        aria-label="<?php echo htmlspecialchars($labelText); ?>"
+                    ></rect>
+
+                    <rect
+                        class="bar"
+                        x="<?php echo $marginLeft; ?>" y="<?php echo $y; ?>"
+                        width="<?php echo max($barW, 1); ?>" height="<?php echo $barThickness; ?>"
+                        rx="4" ry="4"
+                        data-departamento="<?php echo htmlspecialchars($fila['departamento']); ?>"
+                        data-valor="<?php echo (int) $fila['total_empleados']; ?>"
+                    ></rect>
+
+                    <text
+                        x="<?php echo $marginLeft + $barW + 8; ?>" y="<?php echo $y + $barThickness / 2; ?>"
+                        class="value-label" dominant-baseline="middle"
+                    ><?php echo number_format($fila['total_empleados']); ?></text>
+                <?php endforeach; ?>
+
+                <!-- Línea base -->
                 <line
-                    x1="<?php echo $x; ?>" y1="<?php echo $marginTop; ?>"
-                    x2="<?php echo $x; ?>" y2="<?php echo $marginTop + $plotHeight; ?>"
-                    class="gridline"
+                    x1="<?php echo $marginLeft; ?>" y1="<?php echo $marginTop; ?>"
+                    x2="<?php echo $marginLeft; ?>" y2="<?php echo $marginTop + $plotHeight; ?>"
+                    class="baseline"
                 />
-                <text
-                    x="<?php echo $x; ?>" y="<?php echo $marginTop + $plotHeight + 20; ?>"
-                    class="axis-label" text-anchor="middle"
-                ><?php echo number_format($tick); ?></text>
-            <?php endfor; ?>
+            </svg>
 
-            <!-- Barras -->
-            <?php foreach ($filas as $i => $fila):
-                $y = $marginTop + $i * $rowHeight;
-                $barW = xForValue($fila['total_empleados'], $axisMax, $plotWidth);
-                $labelText = $fila['departamento'] . ': ' . number_format($fila['total_empleados']) . ' empleados';
-            ?>
-                <text
-                    x="<?php echo $marginLeft - 12; ?>" y="<?php echo $y + $barThickness / 2; ?>"
-                    class="dept-label" text-anchor="end" dominant-baseline="middle"
-                ><?php echo htmlspecialchars($fila['departamento']); ?></text>
-
-                <rect
-                    class="bar-hit"
-                    x="<?php echo $marginLeft; ?>" y="<?php echo $y; ?>"
-                    width="<?php echo $plotWidth; ?>" height="<?php echo $barThickness; ?>"
-                    fill="transparent"
-                    tabindex="0"
-                    data-departamento="<?php echo htmlspecialchars($fila['departamento']); ?>"
-                    data-valor="<?php echo (int) $fila['total_empleados']; ?>"
-                    aria-label="<?php echo htmlspecialchars($labelText); ?>"
-                ></rect>
-
-                <rect
-                    class="bar"
-                    x="<?php echo $marginLeft; ?>" y="<?php echo $y; ?>"
-                    width="<?php echo max($barW, 1); ?>" height="<?php echo $barThickness; ?>"
-                    rx="4" ry="4"
-                    data-departamento="<?php echo htmlspecialchars($fila['departamento']); ?>"
-                    data-valor="<?php echo (int) $fila['total_empleados']; ?>"
-                ></rect>
-
-                <text
-                    x="<?php echo $marginLeft + $barW + 8; ?>" y="<?php echo $y + $barThickness / 2; ?>"
-                    class="value-label" dominant-baseline="middle"
-                ><?php echo number_format($fila['total_empleados']); ?></text>
-            <?php endforeach; ?>
-
-            <!-- Línea base -->
-            <line
-                x1="<?php echo $marginLeft; ?>" y1="<?php echo $marginTop; ?>"
-                x2="<?php echo $marginLeft; ?>" y2="<?php echo $marginTop + $plotHeight; ?>"
-                class="baseline"
-            />
-        </svg>
-
-        <div id="chart-tooltip" class="chart-tooltip" hidden></div>
+            <div id="chart-tooltip" class="chart-tooltip" hidden></div>
+        </div>
     </div>
-</div>
 
-<style>
-    .chart-wrap {
-        position: relative;
-        overflow-x: auto;
-    }
+    <style>
+        .dept-chart-wrap {
+            position: relative;
+            overflow-x: auto;
+        }
 
-    svg.dept-chart {
-        width: 100%;
-        height: auto;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    }
+        svg.dept-chart {
+            width: 100%;
+            height: auto;
+        }
 
-    .gridline {
-        stroke: var(--gridline);
-        stroke-width: 1;
-    }
+        .gridline {
+            stroke: #e5e7eb;
+            stroke-width: 1;
+        }
 
-    .baseline {
-        stroke: var(--baseline);
-        stroke-width: 1;
-    }
+        .baseline {
+            stroke: #c3c2b7;
+            stroke-width: 1;
+        }
 
-    .axis-label {
-        fill: var(--text-muted);
-        font-size: 11px;
-    }
+        .axis-label {
+            fill: #6b7280;
+            font-size: 11px;
+        }
 
-    .dept-label {
-        fill: var(--text-secondary);
-        font-size: 13px;
-    }
+        .dept-label {
+            fill: #374151;
+            font-size: 13px;
+        }
 
-    .value-label {
-        fill: var(--text-primary);
-        font-size: 12px;
-        font-variant-numeric: tabular-nums;
-    }
+        .value-label {
+            fill: #111827;
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+        }
 
-    .bar {
-        fill: var(--series-1);
-        transition: fill 0.1s ease;
-        pointer-events: none;
-    }
+        .bar {
+            fill: #1f2937;
+            transition: fill 0.1s ease;
+            pointer-events: none;
+        }
 
-    .bar-hit {
-        cursor: pointer;
-    }
+        .bar-hit {
+            cursor: pointer;
+        }
 
-    .bar-hit:hover + .bar,
-    .bar-hit:focus + .bar {
-        fill: var(--series-1);
-        filter: brightness(1.12);
-    }
+        .bar-hit:hover + .bar,
+        .bar-hit:focus + .bar {
+            fill: #374151;
+        }
 
-    .bar-hit:focus {
-        outline: 2px solid var(--series-1);
-        outline-offset: 2px;
-    }
+        .bar-hit:focus {
+            outline: 2px solid #1f2937;
+            outline-offset: 2px;
+        }
 
-    .chart-tooltip {
-        position: absolute;
-        pointer-events: none;
-        background: var(--surface-1);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        padding: 6px 10px;
-        font-size: 13px;
-        color: var(--text-secondary);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        transform: translate(-50%, -110%);
-        white-space: nowrap;
-    }
+        .chart-tooltip {
+            position: absolute;
+            pointer-events: none;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            color: #374151;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transform: translate(-50%, -110%);
+            white-space: nowrap;
+        }
 
-    .chart-tooltip strong {
-        color: var(--text-primary);
-        font-variant-numeric: tabular-nums;
-    }
-</style>
+        .chart-tooltip strong {
+            color: #111827;
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
 
-<script>
-(function () {
-    var svg = document.querySelector('svg.dept-chart');
-    var tooltip = document.getElementById('chart-tooltip');
-    var wrap = document.querySelector('.chart-wrap');
+    <script>
+    (function () {
+        var svg = document.querySelector('svg.dept-chart');
+        var tooltip = document.getElementById('chart-tooltip');
+        var wrap = document.querySelector('.dept-chart-wrap');
 
-    function showTooltip(target, clientX, clientY) {
-        var dept = target.getAttribute('data-departamento');
-        var valor = Number(target.getAttribute('data-valor')).toLocaleString('es-MX');
+        function showTooltip(target, clientX, clientY) {
+            var dept = target.getAttribute('data-departamento');
+            var valor = Number(target.getAttribute('data-valor')).toLocaleString('es-MX');
 
-        tooltip.innerHTML = '';
-        var deptNode = document.createTextNode(dept + ': ');
-        var strong = document.createElement('strong');
-        strong.textContent = valor + ' empleados';
-        tooltip.appendChild(deptNode);
-        tooltip.appendChild(strong);
+            tooltip.innerHTML = '';
+            var deptNode = document.createTextNode(dept + ': ');
+            var strong = document.createElement('strong');
+            strong.textContent = valor + ' empleados';
+            tooltip.appendChild(deptNode);
+            tooltip.appendChild(strong);
 
-        var wrapRect = wrap.getBoundingClientRect();
-        tooltip.style.left = (clientX - wrapRect.left) + 'px';
-        tooltip.style.top = (clientY - wrapRect.top) + 'px';
-        tooltip.hidden = false;
-    }
+            var wrapRect = wrap.getBoundingClientRect();
+            tooltip.style.left = (clientX - wrapRect.left) + 'px';
+            tooltip.style.top = (clientY - wrapRect.top) + 'px';
+            tooltip.hidden = false;
+        }
 
-    function hideTooltip() {
-        tooltip.hidden = true;
-    }
+        function hideTooltip() {
+            tooltip.hidden = true;
+        }
 
-    svg.querySelectorAll('.bar-hit').forEach(function (el) {
-        el.addEventListener('pointermove', function (e) {
-            showTooltip(el, e.clientX, e.clientY);
+        svg.querySelectorAll('.bar-hit').forEach(function (el) {
+            el.addEventListener('pointermove', function (e) {
+                showTooltip(el, e.clientX, e.clientY);
+            });
+            el.addEventListener('pointerenter', function (e) {
+                showTooltip(el, e.clientX, e.clientY);
+            });
+            el.addEventListener('pointerleave', hideTooltip);
+            el.addEventListener('focus', function () {
+                var rect = el.getBoundingClientRect();
+                showTooltip(el, rect.left + rect.width / 2, rect.top);
+            });
+            el.addEventListener('blur', hideTooltip);
         });
-        el.addEventListener('pointerenter', function (e) {
-            showTooltip(el, e.clientX, e.clientY);
-        });
-        el.addEventListener('pointerleave', hideTooltip);
-        el.addEventListener('focus', function () {
-            var rect = el.getBoundingClientRect();
-            showTooltip(el, rect.left + rect.width / 2, rect.top);
-        });
-        el.addEventListener('blur', hideTooltip);
-    });
-})();
-</script>
+    })();
+    </script>
 
-<?php require __DIR__ . '/../includes/footer.php'; ?>
+</body>
+</html>

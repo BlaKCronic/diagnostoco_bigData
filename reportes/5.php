@@ -33,37 +33,6 @@ $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Empleados - Incremento Salarial</title>
     <link rel="stylesheet" href="../css/estilo.css">
-    <style>
-        .filter-form {
-            background-color: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #e5e7eb;
-            display: inline-block;
-        }
-        .filter-form label {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .filter-form input[type="number"] {
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 80px;
-        }
-        .filter-form button {
-            padding: 6px 12px;
-            background-color: #1f2937;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .filter-form button:hover {
-            background-color: #374151;
-        }
-    </style>
 </head>
 <body>
 
@@ -80,36 +49,40 @@ $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </form>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>No. Emp</th>
-                <th>Empleado</th>
-                <th>Salario Inicial (Min)</th>
-                <th>Salario Final (Max)</th>
-                <th>% Incremento</th>
-                <th>Años de Carrera</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (count($datos) > 0): ?>
-                <?php foreach ($datos as $fila): ?>
+    <div class="card">
+        <div class="table-container">
+            <table>
+                <thead>
                     <tr>
-                        <td><?= $fila['emp_no'] ?></td>
-                        <td><?= htmlspecialchars($fila['empleado']) ?></td>
-                        <td>$<?= number_format((float)$fila['salario_minimo'], 2) ?></td>
-                        <td>$<?= number_format((float)$fila['salario_maximo'], 2) ?></td>
-                        <td style="color: green; font-weight: bold;">+<?= $fila['incremento_pct'] ?>%</td>
-                        <td><?= $fila['anios_carrera'] ?> años</td>
+                        <th>No. Emp</th>
+                        <th>Empleado</th>
+                        <th>Salario Inicial (Min)</th>
+                        <th>Salario Final (Max)</th>
+                        <th>% Incremento</th>
+                        <th>Años de Carrera</th>
                     </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="6" style="text-align:center;">No se encontraron resultados</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    <?php if (count($datos) > 0): ?>
+                        <?php foreach ($datos as $fila): ?>
+                            <tr>
+                                <td><?= $fila['emp_no'] ?></td>
+                                <td><?= htmlspecialchars($fila['empleado']) ?></td>
+                                <td>$<?= number_format((float)$fila['salario_minimo'], 2) ?></td>
+                                <td>$<?= number_format((float)$fila['salario_maximo'], 2) ?></td>
+                                <td style="color: green; font-weight: bold;">+<?= $fila['incremento_pct'] ?>%</td>
+                                <td><?= $fila['anios_carrera'] ?> años</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="empty">No se encontraron resultados</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </body>
 </html>

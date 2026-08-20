@@ -54,13 +54,14 @@ $datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
         <a href="../index.php">Volver al inicio</a>
     </nav>
 
-    <p class="desc" style="text-align: center;">
+    <p class="desc">
         Comparación del salario promedio entre hombres y mujeres
         por departamento.
     </p>
 
     <?php if (count($datos) > 0): ?>
 
+        <div class="card">
         <div class="table-container">
 
             <table>
@@ -109,6 +110,7 @@ $datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
 
             </table>
 
+        </div>
         </div>
 
     <?php else: ?>

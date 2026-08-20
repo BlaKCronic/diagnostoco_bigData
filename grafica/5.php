@@ -46,62 +46,6 @@ foreach ($datos as $fila) {
     <title>Gráfica - Top Incremento Salarial</title>
     <link rel="stylesheet" href="../css/estilo.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        p.desc {
-            color: #6b7280;
-            margin: 0 auto 24px;
-            max-width: 60ch;
-            text-align: center;
-            line-height: 1.6;
-        }
-
-        .chart-card {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto 25px;
-            padding: 24px;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-        }
-
-        .chart-wrap {
-            position: relative;
-            width: 100%;
-            height: 450px;
-        }
-
-        .filter-form {
-            background-color: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #e5e7eb;
-            display: inline-block;
-        }
-        .filter-form label {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .filter-form input[type="number"] {
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 80px;
-        }
-        .filter-form button {
-            padding: 6px 12px;
-            background-color: #1f2937;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .filter-form button:hover {
-            background-color: #374151;
-        }
-    </style>
 </head>
 <body>
 
@@ -123,7 +67,7 @@ foreach ($datos as $fila) {
         Relación entre los Años de Carrera (Eje X) y el Porcentaje de Incremento Salarial (Eje Y). Pasa el mouse sobre los puntos para ver los detalles.
     </p>
 
-    <div class="chart-card">
+    <div class="card">
         <div class="chart-wrap">
             <canvas id="graficoDisc"></canvas>
         </div>

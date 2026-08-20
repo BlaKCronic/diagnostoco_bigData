@@ -60,37 +60,8 @@ foreach ($datos as $fila) {
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head> 
-<style>
-    p.desc {
-        color: #6b7280;
-        margin: 0 auto 24px;
-        max-width: 60ch;
-        text-align: center;
-        line-height: 1.6;
-    }
-
-    .chart-card {
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto 25px;
-        padding: 24px;
-
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-    }
-
-    .chart-wrap {
-        position: relative;
-        width: 100%;
-        height: 380px;
-    }
-</style>
- 
-<body> 
+</head>
+<body>
  
     <h1>Brecha salarial por departamento y género</h1> 
  
@@ -103,9 +74,9 @@ foreach ($datos as $fila) {
         por departamento. 
     </p> 
  
-    <<?php if (count($datos) > 0): ?>
+    <?php if (count($datos) > 0): ?>
 
-        <div class="chart-card">
+        <div class="card">
 
             <div class="chart-wrap">
                 <canvas id="graficaBrecha"></canvas>

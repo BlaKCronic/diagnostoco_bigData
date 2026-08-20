@@ -3,12 +3,17 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config.php';
 
+$fechaRef = $_GET['fecha_ref'] ?? '';
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaRef)) {
+    $fechaRef = date('Y-m-d');
+}
+
 $sql = "SELECT
             CASE
-                WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 30 THEN '<30'
-                WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 40 THEN '30-39'
-                WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 50 THEN '40-49'
-                WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) < 60 THEN '50-59'
+                WHEN TIMESTAMPDIFF(YEAR, birth_date, :fecha_ref1) < 30 THEN '<30'
+                WHEN TIMESTAMPDIFF(YEAR, birth_date, :fecha_ref2) < 40 THEN '30-39'
+                WHEN TIMESTAMPDIFF(YEAR, birth_date, :fecha_ref3) < 50 THEN '40-49'
+                WHEN TIMESTAMPDIFF(YEAR, birth_date, :fecha_ref4) < 60 THEN '50-59'
                 ELSE '>=60'
             END AS rango_edad,
             gender,
@@ -17,9 +22,15 @@ $sql = "SELECT
         GROUP BY rango_edad, gender
         ORDER BY rango_edad";
 
-$resultado = $pdo->query($sql);
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    'fecha_ref1' => $fechaRef,
+    'fecha_ref2' => $fechaRef,
+    'fecha_ref3' => $fechaRef,
+    'fecha_ref4' => $fechaRef,
+]);
 
-$datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
+$datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -29,41 +40,13 @@ $datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Empleados por edad y género</title>
+    <title>Gráfica 4 · Empleados por edad y género</title>
 
     <link rel="stylesheet" href="../css/estilo.css">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<style>
-    p.desc {
-        color: #6b7280;
-        margin: 0 auto 24px;
-        max-width: 60ch;
-        text-align: center;
-        line-height: 1.6;
-    }
-
-    .chart-card {
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto 25px;
-        padding: 24px;
-
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-    }
-
-    .chart-wrap {
-        position: relative;
-        width: 100%;
-        height: 380px;
-    }
-</style>
 
 <body>
 
@@ -72,11 +55,20 @@ $datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
     <nav>
         <a href="../index.php">Volver al inicio</a>
     </nav>
+
     <p class="desc">
-        Distribución de empleados según su rango de edad y género.
+        Distribución de empleados según su rango de edad y género, calculada contra la fecha de referencia elegida.
     </p>
 
-    <div class="chart-card">
+    <div style="text-align: center;">
+        <form class="filter-form" method="GET">
+            <label for="fecha_ref">Fecha de referencia:</label>
+            <input type="date" name="fecha_ref" id="fecha_ref" value="<?= htmlspecialchars($fechaRef) ?>">
+            <button type="submit">Actualizar</button>
+        </form>
+    </div>
+
+    <div class="card">
         <div class="chart-wrap">
             <canvas id="graficoEdades"></canvas>
         </div>
@@ -119,15 +111,15 @@ $datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
 
                 datasets: [
                     {
-                        label: 'Hombres',
+                        label: 'Masculino',
                         data: hombres,
-                        backgroundColor: '#1f2937',
+                        backgroundColor: '#2a78d6',
                         borderRadius: 6
                     },
                     {
-                        label: 'Mujeres',
+                        label: 'Femenino',
                         data: mujeres,
-                        backgroundColor: '#6b7280',
+                        backgroundColor: '#eb6834',
                         borderRadius: 6
                     }
                 ]
@@ -191,7 +183,7 @@ $datos = $resultado->fetchAll(PDO::FETCH_ASSOC);
                     }
                 }
             }
-        }); 
+        });
     </script>
 
 </body>

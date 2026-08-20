@@ -3,8 +3,8 @@ require_once("../config.php");
 
 $sql = "SELECT d.dept_name AS departamento, ROUND(AVG(s.salary), 2) AS salario_promedio
         FROM departments d
-        INNER JOIN dept_emp de ON d.dept_no = de.dept_no
-        INNER JOIN salaries s ON de.emp_no = s.emp_no
+        INNER JOIN dept_emp de ON d.dept_no = de.dept_no AND de.to_date = '9999-01-01'
+        INNER JOIN salaries s ON de.emp_no = s.emp_no AND s.to_date = '9999-01-01'
         GROUP BY d.dept_no, d.dept_name
         ORDER BY salario_promedio DESC";
 
@@ -33,10 +33,14 @@ try {
 </head>
 <body>
 
+    <nav>
+        <a href="../index.php">Volver al inicio</a>
+    </nav>
+
     <div class="card">
         <h2>Gráfica: Salario Promedio por Departamento</h2>
-        
-        <div style="position: relative; width: 100%; height: 400px; margin-top: 20px;">
+
+        <div class="chart-wrap">
             <canvas id="graficaSalarios"></canvas>
         </div>
     </div>
